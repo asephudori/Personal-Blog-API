@@ -51,14 +51,14 @@ module.exports = {
 
       res.status(201).json({
         status: true,
-        message: "Register successfully",
+        message: 'Register successfully',
         data: {
           user: {
             name: user.name,
-            email: user.email
-          }
-        }
-      })
+            email: user.email,
+          },
+        },
+      });
     } catch (error) {
       next(error);
     }
