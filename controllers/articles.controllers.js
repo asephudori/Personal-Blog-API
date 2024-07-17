@@ -72,4 +72,38 @@ module.exports = {
       next(error);
     }
   },
+
+  // Update article publish status
+  updatePublishStatus: async (req, res, next) => {
+    try {
+      let articleId = req.params;
+
+      // validate articles
+      let isExist = await prisma.articles.findUnique({
+        where: { id: Number(articleId) },
+      });
+
+      if (!isExist) {
+        return res.status(401).json({
+          status: false,
+          message: 'Bad request!',
+          error: 'Article not found!',
+        });
+      }
+
+      // update publish status
+      let updateArticle = await prisma.articles.update({
+        where: { id: Number(articleId) },
+        data: { published: true },
+      });
+
+      return res.status(201).json({
+        status: true,
+        message: 'Publish status has been updated!',
+        data: updateArticle,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
