@@ -106,4 +106,38 @@ module.exports = {
       next(error);
     }
   },
+
+  // delete articles
+  deleteArticle: async (req, res, next) => {
+    try {
+      let articleId = req.params;
+
+      // validate article
+      let isExist = await prisma.articles.findUnique({
+        where: { id: Number(articleId) },
+      });
+
+      if (!isExist) {
+        return res.status(401).json({
+          status: false,
+          message: 'Bad request!',
+          error: 'Article not found!',
+        });
+      }
+
+      // delete articles
+      let deleteArticle = await prisma.articles.delete({
+        where: { id: Number(articleId) },
+      });
+
+      return res.status(201).json({
+        status: true,
+        message: 'Article has been deleted!',
+        data: deleteArticle,
+      });
+      
+    } catch (error) {
+      next(error);
+    }
+  },
 };
