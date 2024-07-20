@@ -63,7 +63,7 @@ module.exports = {
       });
 
       // success response
-      return res.status(201).json({
+      return res.status(200).json({
         status: true,
         message: 'Article is updated!',
         data: article,
@@ -84,7 +84,7 @@ module.exports = {
       });
 
       if (!isExist) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: false,
           message: 'Bad request!',
           error: 'Article not found!',
@@ -97,7 +97,7 @@ module.exports = {
         data: { published: true },
       });
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: true,
         message: 'Publish status has been updated!',
         data: updateArticle,
@@ -118,7 +118,7 @@ module.exports = {
       });
 
       if (!isExist) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: false,
           message: 'Bad request!',
           error: 'Article not found!',
@@ -130,12 +130,64 @@ module.exports = {
         where: { id: Number(articleId) },
       });
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: true,
         message: 'Article has been deleted!',
         data: deleteArticle,
       });
-      
+
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // searching articles
+  findArticles: async (req, res, next) => {
+    try {
+      let { title, content, authorName } = req.query;
+
+      let articles = await prisma.articles.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: title,
+                mode: 'insensitive',
+              },
+            },
+            {
+              content: {
+                contains: content,
+                mode: 'insensitive',
+              },
+            },
+            {
+              author: {
+                name: {
+                  contains: authorName,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          ],
+        },
+        include: {
+          author: true,
+        },
+      });
+
+      if (articles.length === 0) {
+        return res.status(404).json({
+          status: false,
+          message: 'Bad request!',
+          error: 'No articles found matching the criteria',
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: 'Articles found successfully',
+      });
     } catch (error) {
       next(error);
     }
