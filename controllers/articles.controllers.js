@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const pagination = require("../helper/pagination")
 
 module.exports = {
   // create articles
@@ -141,40 +142,51 @@ module.exports = {
     }
   },
 
-  // searching articles
+  // searching articles with pagination
   findArticles: async (req, res, next) => {
     try {
-      let { title, content, authorName } = req.query;
+      let { title, content, authorName, page = 1, limit = 8 } = req.query;
+      page = parseInt(page)
+      limit = parseInt(limit)
+
+      let skip = (page - 1) * limit
+
+      let withPagination = {
+        OR: [
+          {
+            title: {
+              contains: title,
+              mode: 'insensitive',
+            },
+          },
+          {
+            content: {
+              contains: content,
+              mode: 'insensitive',
+            },
+          },
+          {
+            author: {
+              name: {
+                contains: authorName,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ]
+      }
 
       let articles = await prisma.articles.findMany({
-        where: {
-          OR: [
-            {
-              title: {
-                contains: title,
-                mode: 'insensitive',
-              },
-            },
-            {
-              content: {
-                contains: content,
-                mode: 'insensitive',
-              },
-            },
-            {
-              author: {
-                name: {
-                  contains: authorName,
-                  mode: 'insensitive',
-                },
-              },
-            },
-          ],
-        },
+        where: withPagination,
         include: {
           author: true,
         },
+        skip: skip,
+        limit: limit
       });
+
+      // count total articles matching the criteria
+      let count = await prisma.articles.count({where: withPagination})
 
       if (articles.length === 0) {
         return res.status(404).json({
@@ -184,9 +196,14 @@ module.exports = {
         });
       }
 
+      // get pagination links
+      let paginationResult = pagination.getPagination(req, res, count, page, limit)
+
       return res.status(200).json({
         status: true,
         message: 'Articles found successfully',
+        data: articles,
+        pagination: paginationResult
       });
     } catch (error) {
       next(error);
