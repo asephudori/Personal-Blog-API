@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const pagination = require("../helper/pagination")
+const pagination = require('../helper/pagination');
 
 module.exports = {
   // create articles
@@ -136,7 +136,6 @@ module.exports = {
         message: 'Article has been deleted!',
         data: deleteArticle,
       });
-
     } catch (error) {
       next(error);
     }
@@ -146,10 +145,10 @@ module.exports = {
   findArticles: async (req, res, next) => {
     try {
       let { title, content, authorName, page = 1, limit = 8 } = req.query;
-      page = parseInt(page)
-      limit = parseInt(limit)
+      page = parseInt(page);
+      limit = parseInt(limit);
 
-      let skip = (page - 1) * limit
+      let skip = (page - 1) * limit;
 
       let withPagination = {
         OR: [
@@ -173,8 +172,8 @@ module.exports = {
               },
             },
           },
-        ]
-      }
+        ],
+      };
 
       let articles = await prisma.articles.findMany({
         where: withPagination,
@@ -182,11 +181,11 @@ module.exports = {
           author: true,
         },
         skip: skip,
-        limit: limit
+        limit: limit,
       });
 
       // count total articles matching the criteria
-      let count = await prisma.articles.count({where: withPagination})
+      let count = await prisma.articles.count({ where: withPagination });
 
       if (articles.length === 0) {
         return res.status(404).json({
@@ -197,13 +196,46 @@ module.exports = {
       }
 
       // get pagination links
-      let paginationResult = pagination.getPagination(req, res, count, page, limit)
+      let paginationResult = pagination.getPagination(
+        req,
+        res,
+        count,
+        page,
+        limit
+      );
 
       return res.status(200).json({
         status: true,
         message: 'Articles found successfully',
         data: articles,
-        pagination: paginationResult
+        pagination: paginationResult,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // all articles without pagination
+  getAllArticles: async (req, res, next) => {
+    try {
+      let getAllArticles = await prisma.articles.findMany({
+        include: {
+          author: true,
+        },
+      });
+
+      if (getAllArticles.length === 0) {
+        return res.status(404).json({
+          status: false,
+          message: 'No articles found',
+          data: null,
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: 'Article successfully found',
+        data: getAllArticles,
       });
     } catch (error) {
       next(error);
