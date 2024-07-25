@@ -141,7 +141,7 @@ paths:
   /articles:
     post:
       tags:
-        - Article
+        - articles
       summary: Create a new article
       requestBody:
         required: true
@@ -183,10 +183,104 @@ paths:
           description: Bad request
         '500':
           description: Server error
+    get:
+      tags:
+        - articles
+      summary: Retrieve all articles without pagination
+      responses:
+        '200':
+          description: Successfully retrieved all articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Article successfully found"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+        '404':
+          description: No articles found
+        '500':
+          description: Server error
+  /articles/search:
+    get:
+      tags:
+        - articles
+      summary: Search for articles with pagination
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Title to search for
+        - in: query
+          name: content
+          schema:
+            type: string
+          description: Content to search for
+        - in: query
+          name: authorName
+          schema:
+            type: string
+          description: Author's name to search for
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for pagination (default is 1)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of articles per page (default is 8)
+      responses:
+        '200':
+          description: Successfully found articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Articles found successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+                  pagination:
+                    type: object
+                    properties:
+                      totalItems:
+                        type: integer
+                        example: 100
+                      totalPages:
+                        type: integer
+                        example: 13
+                      currentPage:
+                        type: integer
+                        example: 1
+                      pageSize:
+                        type: integer
+                        example: 8
+        '404':
+          description: No articles found matching the criteria
+        '500':
+          description: Server error
   /articles/{id}:
     put:
       tags:
-        - Article
+        - articles
       summary: Update an existing article
       parameters:
         - in: path
@@ -237,7 +331,7 @@ paths:
           description: Server error
     patch:
       tags:
-        - Article
+        - articles
       summary: Update article publish status
       parameters:
         - in: path
@@ -268,7 +362,7 @@ paths:
           description: Server error
     delete:
       tags:
-        - Article
+        - articles
       summary: Delete an article
       parameters:
         - in: path
