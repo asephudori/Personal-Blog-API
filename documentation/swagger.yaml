@@ -137,11 +137,72 @@ paths:
                     type: string
                     example: Invalid Email or Password
 
+# users
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Retrieve all users
+      responses:
+        '200':
+          description: Successfully retrieved all users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User successfully found"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '404':
+          description: No users found
+        '500':
+          description: Server error
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Retrieve a user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user to retrieve
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User successfully found!"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
 # articles
   /articles:
     post:
       tags:
-        - articles
+        - Articles
       summary: Create a new article
       requestBody:
         required: true
@@ -185,7 +246,7 @@ paths:
           description: Server error
     get:
       tags:
-        - articles
+        - Articles
       summary: Retrieve all articles without pagination
       responses:
         '200':
@@ -212,7 +273,7 @@ paths:
   /articles/search:
     get:
       tags:
-        - articles
+        - Articles
       summary: Search for articles with pagination
       parameters:
         - in: query
@@ -280,7 +341,7 @@ paths:
   /articles/{id}:
     put:
       tags:
-        - articles
+        - Articles
       summary: Update an existing article
       parameters:
         - in: path
@@ -331,7 +392,7 @@ paths:
           description: Server error
     patch:
       tags:
-        - articles
+        - Articles
       summary: Update article publish status
       parameters:
         - in: path
@@ -362,7 +423,7 @@ paths:
           description: Server error
     delete:
       tags:
-        - articles
+        - Articles
       summary: Delete an article
       parameters:
         - in: path
@@ -393,6 +454,30 @@ paths:
           description: Server error
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        Articles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 101
+              title:
+                type: string
+                example: "Sample Article"
+
     Article:
       type: object
       properties:
