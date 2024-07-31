@@ -11,9 +11,9 @@ const {
 const articleRouter = Router();
 
 articleRouter.post('/post', addArticle);
-articleRouter.put('/update/:article_id', updateArticle);
-articleRouter.patch('/update-publish-status/:article_id', updatePublishStatus);
-articleRouter.delete('/delete/:article_id', deleteArticle);
+articleRouter.put('/update/:id', updateArticle);
+articleRouter.patch('/update-publish-status/:id', updatePublishStatus);
+articleRouter.delete('/delete/:id', deleteArticle);
 articleRouter.get('/search', findArticles);
 articleRouter.get('/', getAllArticles);
 

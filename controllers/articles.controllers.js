@@ -15,6 +15,7 @@ module.exports = {
           createdAt: new Date(createdAt),
           updatedAt: new Date(),
           authorId,
+          published: false
         },
       });
 
@@ -33,12 +34,12 @@ module.exports = {
   updateArticle: async (req, res, next) => {
     try {
       let { title, content, updatedAt, authorId } = req.body;
-      let articleId = req.params;
+      let articleId = parseInt (req.params.id);
 
       // validate articles
       let existingArticles = await prisma.articles.findUnique({
         where: {
-          id: Number(articleId),
+          id: articleId,
         },
       });
 
@@ -53,12 +54,12 @@ module.exports = {
 
       let article = await prisma.articles.update({
         where: {
-          id: Number(articleId),
+          id: articleId,
         },
         data: {
           title,
           content,
-          updatedAt,
+          updatedAt: new Date().toISOString(), // Correct ISO-8601 format
           authorId,
         },
       });
@@ -77,12 +78,13 @@ module.exports = {
   // Update article publish status
   updatePublishStatus: async (req, res, next) => {
     try {
-      let articleId = req.params;
+    // Extract articleId from req.params
+    let articleId = parseInt(req.params.id, 10);
 
-      // validate articles
-      let isExist = await prisma.articles.findUnique({
-        where: { id: Number(articleId) },
-      });
+    // Validate article existence
+    let isExist = await prisma.articles.findUnique({
+      where: { id: articleId },
+    });
 
       if (!isExist) {
         return res.status(404).json({
