@@ -1,0 +1,55 @@
+### checking
+GET http://localhost:3000/
+
+# -------------------- AUTH -------------------------
+### register
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "name":"kafka",
+    "email":"kafka@mail.com",
+    "password":"password123"
+}
+
+### login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email":"kafka@mail.com",
+    "password":"password123"
+}
+
+# -------------- ARTICLES --------------
+### get all article
+GET http://localhost:3000/article
+
+### search article
+### example GET http://localhost:3000/article/search?page=1&limit=8&title=yourTitle&content=yourContent&authorName=yourAuthorName
+GET http://localhost:3000/article/search?page=1&limit=8&title=How%20to%20become%20stellaron%20hunter&content=just%20do%20it&authorName=kafka
+
+### create article
+POST http://localhost:3000/article/post
+Content-Type: application/json
+
+{
+    "title":"How to become Stellaron Hunter",
+    "content": "Just do it",
+    "createdAt": "2024-07-30",
+    "authorId": 1
+}
+
+### update articles
+PUT  http://localhost:3000/article/update/1
+Content-Type: application/json
+
+{
+    "title":"How to become Stellaron Hunter",
+    "content": "Just do it",
+    "updatedAt": "2024-07-31",
+    "authorId": 1
+}
+
+### change publish status
+PATCH http://localhost:3000/article/update-publish-status/1
