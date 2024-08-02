@@ -15,7 +15,7 @@ module.exports = {
           createdAt: new Date(createdAt),
           updatedAt: new Date(),
           authorId,
-          published: false
+          published: false,
         },
       });
 
@@ -34,7 +34,7 @@ module.exports = {
   updateArticle: async (req, res, next) => {
     try {
       let { title, content, updatedAt, authorId } = req.body;
-      let articleId = parseInt (req.params.id);
+      let articleId = parseInt(req.params.id);
 
       // validate articles
       let existingArticles = await prisma.articles.findUnique({
@@ -78,13 +78,13 @@ module.exports = {
   // Update article publish status
   updatePublishStatus: async (req, res, next) => {
     try {
-    // Extract articleId from req.params
-    let articleId = parseInt(req.params.id, 10);
+      // Extract articleId from req.params
+      let articleId = parseInt(req.params.id, 10);
 
-    // Validate article existence
-    let isExist = await prisma.articles.findUnique({
-      where: { id: articleId },
-    });
+      // Validate article existence
+      let isExist = await prisma.articles.findUnique({
+        where: { id: articleId },
+      });
 
       if (!isExist) {
         return res.status(404).json({
@@ -183,7 +183,7 @@ module.exports = {
           author: true,
         },
         skip: skip,
-        limit: limit,
+        take: limit,
       });
 
       // count total articles matching the criteria
@@ -206,12 +206,21 @@ module.exports = {
         limit
       );
 
-      return res.status(200).json({
+      // Extract relevant data for response
+      let responseData = {
         status: true,
         message: 'Articles found successfully',
         data: articles,
-        pagination: paginationResult,
-      });
+        pagination: {
+          totalPages: paginationResult.totalPages,
+          currentPage: paginationResult.currentPage,
+          hasNextPage: paginationResult.hasNextPage,
+          hasPreviousPage: paginationResult.hasPreviousPage,
+        },
+      };
+
+      return res.status(200).json(responseData);
+      
     } catch (error) {
       next(error);
     }
