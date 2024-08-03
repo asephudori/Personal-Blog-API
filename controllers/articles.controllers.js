@@ -113,7 +113,7 @@ module.exports = {
   // delete articles
   deleteArticle: async (req, res, next) => {
     try {
-      let articleId = req.params;
+      let articleId = parseInt(req.params.id, 10);
 
       // validate article
       let isExist = await prisma.articles.findUnique({
@@ -180,7 +180,14 @@ module.exports = {
       let articles = await prisma.articles.findMany({
         where: withPagination,
         include: {
-          author: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              bio: true
+            }
+          }
         },
         skip: skip,
         take: limit,
@@ -231,7 +238,14 @@ module.exports = {
     try {
       let getAllArticles = await prisma.articles.findMany({
         include: {
-          author: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              bio: true
+            }
+          }
         },
       });
 
