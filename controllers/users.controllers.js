@@ -5,9 +5,7 @@ module.exports = {
   // find all user
   getAllUsers: async (req, res, next) => {
     try {
-      let getAllUsers = await prisma.users.findMany({
-        where: { id: true },
-      });
+      let getAllUsers = await prisma.users.findMany();
 
       if (getAllUsers.length === 0) {
         return res.status(404).json({
@@ -29,16 +27,18 @@ module.exports = {
 
   getUserById: async (req, res, next) => {
     try {
-      let userId = req.params;
+      let userId = parseInt(req.params.id, 10);
 
       let getUser = await prisma.users.findUnique({
         where: {
-          id: Number(userId),
+          id: userId,
         },
         include: {
-          Articles: {
-            id: true,
-            title: true,
+          post: {
+            select: {
+              id: true,
+              title: true,
+            },
           },
         },
       });

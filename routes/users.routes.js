@@ -3,7 +3,7 @@ const { getAllUsers, getUserById } = require("../controllers/users.controllers")
 
 const userRouter = Router()
 
-userRouter.get("/")
-userRouter.get("/:user_id")
+userRouter.get("/", getAllUsers)
+userRouter.get("/:id", getUserById)
 
 module.exports = userRouter;
