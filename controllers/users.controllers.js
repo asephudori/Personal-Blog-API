@@ -5,7 +5,14 @@ module.exports = {
   // find all user
   getAllUsers: async (req, res, next) => {
     try {
-      let getAllUsers = await prisma.users.findMany();
+      let getAllUsers = await prisma.users.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          bio: true,
+        },
+      });
 
       if (getAllUsers.length === 0) {
         return res.status(404).json({
@@ -33,7 +40,11 @@ module.exports = {
         where: {
           id: userId,
         },
-        include: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          bio: true,
           post: {
             select: {
               id: true,
