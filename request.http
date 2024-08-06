@@ -52,4 +52,14 @@ Content-Type: application/json
 }
 
 ### change publish status
-PATCH http://localhost:3000/article/update-publish-status/1
+PATCH http://localhost:3000/article/update-publish-status/2
+
+### delete article
+DELETE http://localhost:3000/article/delete/1
+
+#--------------Users----------------
+### find all users
+GET http://localhost:3000/user/
+
+### get user by id
+GET http://localhost:3000/user/1
