@@ -3,8 +3,10 @@ info:
   version: 1.0.0
   title: Personal Blog API
   description: API for Personal Blog
+servers:
+  - url: http://localhost:3000
 paths:
-  /register:
+  /auth/register:
     post:
       tags:
         - Auth
@@ -76,7 +78,7 @@ paths:
                     nullable: true
                     example: null
 
-  /login:
+  /auth/login:
     post:
       tags:
       - Auth

@@ -15,8 +15,8 @@ const articleRouter = require('./routes/articles.routes');
 const userRouter = require("./routes/users.routes")
 
 app.use('/auth', authRouter);
-app.use('/article', articleRouter);
-app.use("/user", userRouter)
+app.use('/articles', articleRouter);
+app.use("/users", userRouter)
 
 app.use('/', (req, res) => {
   try {
